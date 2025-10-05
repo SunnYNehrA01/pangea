@@ -7,7 +7,7 @@ import numpy as np
 from transformers import pipeline
 
 # Load once when the app starts
-text_generator = pipeline("text-generation", model="openai-community/gpt2")
+text_generator = pipeline("text-generation", model="distilbert/distilgpt2")
 
 
 main_blueprint = Blueprint('main', __name__)

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>CTCD Project</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>CTCD Project - Pollution Dashboard</h1>
+    <form method="post">
+        <label for="city">Select City:</label>
+        <select name="city" id="city" required>
+            <option value="">-- Select City --</option>
+
+            <optgroup label="Available Cities">
+                {% for city in available_cities %}
+                <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+            </optgroup>
+
+            <optgroup label="Unavailable Cities">
+                {% for city in unavailable_cities %}
+                <option value="{{ city }}" disabled style="color: gray;">{{ city }}</option>
+                {% endfor %}
+            </optgroup>
+        </select>
+        <br><br>
+
+        <label for="year">Year:</label>
+        <input name="year" type="number" min="2018" max="2025" value="{{ selected_year or 2023 }}" required />
+        <br><br>
+
+        <label for="month">Month:</label>
+        <select name="month" id="month" required>
+            <option value="">-- Select Month --</option>
+            {% for i in range(1, 13) %}
+            <option value="{{ i }}" {% if i == selected_month|int %}selected{% endif %}>{{ i }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Add Grade display here -->
+    {% if selected_city and selected_year and selected_month %}
+        <h3>Scoring Grade for {{ selected_city }} ({{ selected_month }}/{{ selected_year }}): {{ grade }}</h3>
+    {% endif %}
+
+
+    {% if recommendations %}
+    <h2>Top Recommendations</h2>
+    <ul>
+        {% for rec in recommendations %}
+        <li>
+            <a href="#" class="rec-link" data-rec='{{ rec | tojson | safe }}'>
+                Score: {{ rec.score }} | CaseID: {{ rec.case_id }} | Event: {{ rec.event }} | Policy: {{ rec.policy }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div id="insightContainer" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px;">
+        <h3>AI-generated Insight will appear here</h3>
+    </div>
+
+
+
+    <h2>Radar Chart</h2>
+    <canvas id="radarChart" width="400" height="400"></canvas>
+    <script>
+    const radarData = JSON.parse('{{ radar_data|safe }}');
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+        labels: radarData.labels,
+        datasets: [{
+            label: 'Scores',
+            data: radarData.values,
+            fill: true,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgb(54, 162, 235)',
+            pointBackgroundColor: 'rgb(54, 162, 235)'
+        }]
+        },
+        options: {
+        scales: {
+            r: { beginAtZero: true, max: 1 }
+        }
+        }
+    });
+    </script>
+
+<script>
+async function fetchInsight(caseData) {
+  try {
+    const response = await fetch('/api/generate_insight', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({case: caseData})
+    });
+    const data = await response.json();
+    const container = document.getElementById('insightContainer');
+    if (data.insight) {
+      container.innerText = data.insight;
+    } else {
+      container.innerText = 'No insight generated: ' + (data.error || 'Unknown error');
+    }
+  } catch (error) {
+    document.getElementById('insightContainer').innerText = 'Error fetching insight: ' + error;
+  }
+}
+</script>
+
+<script>
+document.querySelectorAll('.rec-link').forEach(elem => {
+  elem.addEventListener('click', function(e) {
+    e.preventDefault();
+    const caseData = JSON.parse(this.getAttribute('data-rec'));
+    fetchInsight(caseData);
+  });
+});
+</script>
+
+
+
+    {% endif %}
+</body>
+</html>

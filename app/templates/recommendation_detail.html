@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Recommendation Detail</title>
+</head>
+<body>
+    <h1>Recommendation: {{ rec.event }}</h1>
+    <p><strong>Policy:</strong> {{ rec.policy }}</p>
+    <p><strong>Outcome:</strong> {{ rec.outcome }}</p>
+    <p><strong>Source:</strong> <a href="{{ rec.source }}" target="_blank">{{ rec.source }}</a></p>
+
+    <h2>Implementation</h2>
+    <p>{{ refined.implementation }}</p>
+
+    <h2>Reason</h2>
+    <p>{{ refined.reason }}</p>
+
+    <h2>Applicability</h2>
+    <p>{{ refined.applicability }}</p>
+
+    <p><a href="{{ url_for('main.index') }}">Back to Home</a></p>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# PANGEA – City Pollution Pattern Analysis and Insights
+# PANGEA – Planetary Analytical Network for Geo-Environmental Assessment
 
 Air pollution is a global health crisis. It causes an estimated 7 million premature deaths each year and 99% of people breathe dangerously polluted air[1][2]. Urban air is especially harmful to vulnerable communities (often the poor) and also contributes to climate change[3][2]. To tackle this, city governments worldwide are enacting measures (e.g. electrifying transit, banning dirty fuels, public education campaigns) that have begun to improve air quality in places like Bogotá, Warsaw, Seoul and Accra[4][5]. Long-term trend analysis of air-quality data can reveal whether such interventions are working and guide new policies[6].
 
